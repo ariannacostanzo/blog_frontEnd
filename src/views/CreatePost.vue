@@ -1,11 +1,12 @@
 <script setup>
+//importazioni
+import LoaderApi from '@/components/LoaderApi.vue';
 import axios from 'axios';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 
 //variabili
 const router = useRouter();
-
 const baseUrl = 'http://localhost:8000/posts';
 const baseData = ref({
     title: '',
@@ -13,17 +14,19 @@ const baseData = ref({
     published: true,
     tags: []
 });
-
 const post = ref({})
+const isLoading = ref(false)
+
 
 //funzioni
 const sendPost = async () => {
+    isLoading.value = true
     try {
         const res = await axios.post(baseUrl, baseData.value);
         post.value = res.data;
         console.log(post.value)
         router.push({name: 'detailPost', params: {slug: post.value.slug}})
-
+        isLoading.value = false;
         
     } catch (error) {
         console.log(error)
@@ -31,12 +34,12 @@ const sendPost = async () => {
 }
 
 
-
 </script>
 
 <template>
     <main class="container mx-auto my-5 flex items-center justify-center">
-        <form @submit.prevent="sendPost">
+        <LoaderApi v-if="isLoading"/>
+        <form @submit.prevent="sendPost" v-else>
             <div class="my-5">
                 <label for="title">Titolo post</label>
                 <input id="title" type="text" v-model="baseData.title" required />
@@ -47,6 +50,10 @@ const sendPost = async () => {
             </div>
             <button>Invia</button>
         </form>
+
+        <RouterLink class="ml-5" to="/">
+            Torna indietro
+        </RouterLink>
     </main>
 </template>
 
