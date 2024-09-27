@@ -1,24 +1,52 @@
 <script setup>
 import axios from 'axios';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import LoaderApi from '@/components/LoaderApi.vue';
 
 const posts = ref([])
+const totalPages = ref(0)
+const currentPage = ref(0)
+const isLoading = ref(false)
 
-const fetchPosts = async () => {
+const fetchPosts = async (page = 1, limit = 10) => {
+
+  isLoading.value = true
   try {
-    const res = await axios.get('http://localhost:8000/posts');
-    console.log(res.data)
+    const res = await axios.get(`http://localhost:8000/posts?page=${page}&limit=${limit}`);
     posts.value = res.data.data;
+    totalPages.value = res.data.totalPages;
+    currentPage.value = res.data.page;
+    isLoading.value = false;
+    
   } catch (error) {
     console.log(error)
   }
 
-  console.log(posts.value)
+}
 
+const slideArrows = (value) => {
+  //freccia sinistra
+  if (value === 'left') {
+    //Se sono alla prima pagina
+    if (currentPage.value === 1) return
+    
+      currentPage.value--;
+      fetchPosts(currentPage.value)
+    
+  } else { //freccia destra
+    //se sono all'ultima pagina
+    if (totalPages.value === currentPage.value) return
+    
+    currentPage.value++;
+    fetchPosts(currentPage.value)
+  }
 }
 
 //ottengo i posts
-fetchPosts();
+onMounted(() => {
+  fetchPosts(2);
+})
+
 
 </script>
 
@@ -26,21 +54,19 @@ fetchPosts();
   <main class="container mx-auto mt-5">
 
       <h1 class="text-4xl font-bold mb-5 text-center">Lista dei post</h1>
-
-
-
-      <div class="flex items-center justify-center ">
-        <i class="fa-solid fa-arrow-left mr-5 arrows"></i>
+      <LoaderApi v-if="isLoading"/>
+      <div v-else class="flex items-center justify-center ">
+        <div @click="slideArrows('left')">
+          <i class="fa-solid fa-arrow-left mr-5 arrows"></i>
+        </div>
         <RouterLink :to="{ name: 'detailPost', params: {slug: post.slug}}" v-for="post in posts"
           class="mx-5 my-2 post-card" :key="post.id">
           <h3>{{ post.title }}</h3>
           <p>{{ post.content }}</p>
         </RouterLink>
-        <RouterLink to="/posts/post-1">
-          Post 1
-        </RouterLink>
-
-        <i class="fa-solid fa-arrow-right ml-5 arrows"></i>
+        <div @click="slideArrows('right')">
+          <i class="fa-solid fa-arrow-right ml-5 arrows"></i>
+        </div>
       </div>
 
 
