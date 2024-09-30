@@ -3,7 +3,8 @@ import axios from 'axios';
 import { ref, onMounted, computed } from 'vue';
 import LoaderApi from '@/components/LoaderApi.vue';
 import MainJumbotron from '@/components/MainJumbotron.vue';
-
+// da spostare il container dei post in un componente, spostare anche la searchbar in un componente
+//fare un filtro in base alle categorie e mostrare i tags
 const posts = ref([])
 const totalPages = ref(0)
 const currentPage = ref(0)

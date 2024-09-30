@@ -1,11 +1,13 @@
 <script setup>
 import { useRoute, useRouter } from 'vue-router';
 const router = useRouter();
+const route = useRoute();
 
 //refresho così se mi trovo su post mi fa il reaload dei posts
 const postAndRefresh = () => {
-  router.go(0);
-  router.push({path: '/'})
+  if (route.path === '/') router.go(0); 
+  else router.push({path: '/'})
+  
 }
 </script>
 
