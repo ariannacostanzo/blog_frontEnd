@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import AboutView from '../views/AboutView.vue'
 import PostShow from '@/views/PostShow.vue'
 import CreatePost from '@/views/CreatePost.vue'
+import PostUpdate from '@/views/PostUpdate.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,7 +27,13 @@ const router = createRouter({
       path: '/posts/create',
       name: 'createPost',
       component: CreatePost
-    }
+    },
+    {
+      path: '/posts/:slug/update',
+      name: 'updatePost',
+      component: PostUpdate,
+    },
+
   ]
 })
 

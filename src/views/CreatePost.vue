@@ -38,35 +38,58 @@ const sendPost = async () => {
 
 <template>
     <main class="container mx-auto my-5 flex items-center justify-center">
-        <LoaderApi v-if="isLoading"/>
+        <LoaderApi v-if="isLoading" />
         <form @submit.prevent="sendPost" v-else>
-            <div class="my-5">
+            <div class="my-5 input-container">
                 <label for="title">Titolo post</label>
                 <input id="title" type="text" v-model="baseData.title" required />
             </div>
-            <div class="my-5">
+            <div class="my-5 input-container">
                 <label for="content">Contenuto post</label>
                 <textarea name="content" id="content" v-model="baseData.content" required></textarea>
             </div>
-            <button>Invia</button>
+            <div class="flex items-center justify-center mt-10">
+                <RouterLink class=" custom-span" to="/">
+                    Torna indietro
+                </RouterLink>
+                <button class="custom-span ml-5">Crea</button>
+            </div>
         </form>
 
-        <RouterLink class="ml-5" to="/">
-            Torna indietro
-        </RouterLink>
+
     </main>
 </template>
 
 <style  scoped>
-  input, textarea {
-    border: 1px solid black;
-  }
-  label {
-    margin-right: 5px;
-  }
-  button {
-    border: 1px solid red;
-    background-color: lightcoral;
+main {
+    color: var(--custom-black);
+    background-color: var(--custom-pink-light);
+    width: 500px;
     padding: 1rem;
-  }
+    border-radius: 10px;
+}
+
+input, textarea {
+border: 2px solid var(--custom-blue);
+border-radius: 10px;
+padding-left: 10px;
+
+}
+
+input:focus-visible,
+textarea:focus-visible {
+    border-color: var(--custom-indaco);
+    outline: 0;
+}
+
+label {
+    margin-right: 5px;
+}
+
+.input-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+}
 </style>
