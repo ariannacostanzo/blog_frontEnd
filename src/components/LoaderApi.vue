@@ -4,7 +4,8 @@
 <template>
   <div>
 
-    <i class="fa-solid fa-spinner fa-spin text-5xl"></i>
+    <!-- <i class="fa-solid fa-spinner fa-spin text-5xl"></i> -->
+    <img src="../assets/images/loading.gif" alt="loading">
   </div>
 </template>
 
@@ -18,5 +19,10 @@
     display: flex;
     justify-content: center;
     margin-top: 10rem;
+  }
+
+  img {
+    width: 500px;
+    height: 200px;
   }
 </style>

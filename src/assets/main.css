@@ -65,3 +65,16 @@ h1, h2, h3, h4, h4, h6 {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--custom-indaco);
 }
+
+input, textarea {
+border: 2px solid var(--custom-blue);
+border-radius: 10px;
+padding-left: 10px;
+
+}
+
+input:focus-visible,
+textarea:focus-visible {
+    border-color: var(--custom-indaco);
+    outline: 0;
+}

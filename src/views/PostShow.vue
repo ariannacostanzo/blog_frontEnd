@@ -18,7 +18,9 @@ const fetchPost = async () => {
     try {
         const res = await axios.get(baseUrlPost + slug);
         post.value = res.data;
-        isLoading.value = false;
+        setTimeout(() => {
+            isLoading.value = false;
+        }, 200)
     } catch (error) {
         console.log(error)
     }
@@ -69,7 +71,7 @@ watch(() => route.params.slug, () => {
                     </div>
                 </div>
                 <div class="right-content">
-                    
+
                     <PostShowSidebar/>
 
                 </div>

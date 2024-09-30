@@ -80,13 +80,14 @@ onMounted(()=> {
 <style scoped>
 main {
     color: var(--custom-black);
-    background-color: var(--custom-pink-light);
+    border: 2px solid var(--custom-purple);
+    background-color: white;
     width: 500px;
-    padding: 1rem;
+    padding: 2rem 1rem;
     border-radius: 10px;
 }
 
-input,
+/* input,
 textarea {
     border: 2px solid var(--custom-blue);
     border-radius: 10px;
@@ -98,7 +99,7 @@ input:focus-visible,
 textarea:focus-visible {
     border-color: var(--custom-indaco);
     outline: 0;
-}
+} */
 
 label {
     margin-right: 5px;
