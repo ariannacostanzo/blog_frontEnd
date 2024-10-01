@@ -1,32 +1,43 @@
 <script setup>
+//importazioni
 import axios from 'axios';
-import { ref, onMounted, computed, watch } from 'vue';
+import { ref, onMounted, computed, watch, onUnmounted } from 'vue';
 import LoaderApi from '@/components/LoaderApi.vue';
 import PostCard from './PostCard.vue';
 import { useRoute, useRouter } from 'vue-router'
 
+//variabili
 const posts = ref([])
 const totalPages = ref(0)
 const currentPage = ref(0)
 const isLoading = ref(false)
 const route = useRoute();
 const router = useRouter();
-let urlToUse = ref('')
+let urlToUse = ''
 const isLeftDisabled = computed(() => currentPage.value === 1);
 const isRightDisabled = computed(() => currentPage.value === totalPages.value);
 
 const props = defineProps({
-    searchTerm: String
+    searchTerm: String,
+    urlForCategory: String
 })
 
 
 
 const fetchPosts = async (page = 1, limit = 6) => {
+    if (props.urlForCategory) {
+        urlToUse = `${props.urlForCategory}?limit=${limit}&page=${page}`
+    }
+    
     if (props.searchTerm) {
         urlToUse = `http://localhost:8000/posts?page=${page}&limit=${limit}&filter=${props.searchTerm}`
-    } else {
+
+    } 
+    
+    if (!props.urlForCategory && !props.searchTerm) {
         urlToUse = `http://localhost:8000/posts?page=${page}&limit=${limit}`
     }
+
 
     isLoading.value = true
     try {
@@ -34,12 +45,14 @@ const fetchPosts = async (page = 1, limit = 6) => {
         posts.value = res.data.data;
         totalPages.value = res.data.totalPages;
         currentPage.value = res.data.page;
-        setTimeout(() => {
-            isLoading.value = false;
-        }, 400)
+        
 
     } catch (error) {
         console.log(error)
+    } finally {
+        setTimeout(() => {
+            isLoading.value = false;
+        }, 400)
     }
 
 }
@@ -67,6 +80,9 @@ const slideArrows = (value) => {
 onMounted(() => {
     fetchPosts();
 })
+onUnmounted(() => {
+    posts.value = []
+})
 
 watch(() => props.searchTerm, () => {
     fetchPosts()
@@ -78,7 +94,7 @@ watch(() => props.searchTerm, () => {
 <template>
     <div class="flex items-center">
         <!-- freccia sinistra  -->
-        <div @click="slideArrows('left')" v-if="!isLoading">
+        <div @click="slideArrows('left')" v-if="!isLoading && posts.length > 0">
             <i class="fa-solid fa-arrow-left mr-5 arrows" :class="{ 'disabled': isLeftDisabled }"></i>
         </div>
 
@@ -93,10 +109,10 @@ watch(() => props.searchTerm, () => {
                 </RouterLink>
             </div>
         </div>
-        <div v-else class="flex items-center justify-center mx-auto text-[#1b1b1b]">Non ci sono post da mostrare</div>
+        <div v-else class="flex items-center justify-center mx-auto text-[#1b1b1b] text-2xl">Non ci sono post da mostrare</div>
 
         <!-- freccia destra  -->
-        <div @click="slideArrows('right')" v-if="!isLoading">
+        <div @click="slideArrows('right')" v-if="!isLoading && posts.length > 0">
             <i class="fa-solid fa-arrow-right ml-5 arrows" :class="{ 'disabled': isRightDisabled }"></i>
         </div>
     </div>
@@ -130,9 +146,19 @@ watch(() => props.searchTerm, () => {
 
 
 .flex-basis {
-    width: 650px;
+    /* width: 650px; */
+    flex-basis: 50%;
+    flex-grow: 1;
+    flex-shrink: 0;
     box-sizing: border-box;
     height: 280px;
+}
+
+.flex-basis:only-child {
+    flex-basis: 100%;
+    max-width: 650px;
+    margin-left: auto;
+    margin-right: auto;
 }
 .disabled {
   visibility: hidden;

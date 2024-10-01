@@ -11,8 +11,9 @@ const filterPosts = () => {
 </script>
 
 <template>
-    <div>
+    <div class="relative">
         <input type="text" id="searchbar" placeholder="Zelda..." v-model="searchedTerm" @keydown.enter="filterPosts">
+        <span v-if="searchedTerm" @click="searchedTerm = ''"><i class="fa-solid fa-xmark"></i></span>
         <button class="custom-span ml-4" @click="filterPosts">Cerca</button>
     </div>
 </template>
@@ -21,5 +22,14 @@ const filterPosts = () => {
 input {
     padding: 2px 10px;
     color: var(--custom-black);
+}
+
+span {
+    position: absolute;
+    right: 82px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--custom-pink);
+    cursor: pointer;
 }
 </style>

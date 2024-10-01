@@ -21,7 +21,7 @@ const handleSearch = (term) => {
 
     <h1 class="text-4xl font-bold mb-5 text-center">I migliori post</h1>
 
-    <div class="flex justify-between items-center">
+    <div class="flex justify-between items-center mb-6">
 
       <!-- link alla creazione  -->
       <RouterLink to="posts/create" class="custom-span">

@@ -4,6 +4,7 @@ import AboutView from '../views/AboutView.vue'
 import PostShow from '@/views/PostShow.vue'
 import CreatePost from '@/views/CreatePost.vue'
 import PostUpdate from '@/views/PostUpdate.vue'
+import CategoriesPost from '@/views/CategoriesPost.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -32,6 +33,11 @@ const router = createRouter({
       path: '/posts/:slug/update',
       name: 'updatePost',
       component: PostUpdate,
+    },
+    {
+      path: '/posts/category/:categoryId',
+      name: 'categoriesPost',
+      component: CategoriesPost,
     },
 
   ]

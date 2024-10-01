@@ -1,12 +1,14 @@
 <script setup>
 import axios from 'axios';
 import { ref, onMounted, } from 'vue';
+import { useRouter } from 'vue-router';
 
 const categories = ref([]);
 const isLoading = ref(false)
 const baseUrlCategories = 'http://localhost:8000/categories';
 const latestPosts = ref([]);
 const baseUrlLatestPosts = 'http://localhost:8000/posts/latests';
+const router = useRouter();
 
 const fetchCategories = async () => {
     isLoading.value = true
@@ -26,7 +28,6 @@ const fetchLatestPosts = async () => {
         latestPosts.value = res.data.data;
         isLoading.value = false;
         // console.log(res.data)
-        console.log(latestPosts.value)
     } catch (error) {
         console.log(error)
     }
@@ -34,6 +35,10 @@ const fetchLatestPosts = async () => {
 
 const extract = (text) => {
     return text.length < 40 ? text : text.substring(0,40) + '...'
+}
+
+const goToCategoriesFilter = (category) => {
+    router.push({ name: 'categoriesPost', params: {categoryId : category.id}})
 }
 
 onMounted(() => {
@@ -47,7 +52,8 @@ onMounted(() => {
     <h3 class="text-2xl">Categorie</h3>
     <!-- <div class="line"></div> -->
     <ul class="flex flex-wrap gap-3 mt-3 category-list">
-        <li v-for="category in categories" :key="category.id"><span class="custom-span">{{ category.name
+        <li v-for="category in categories" :key="category.id" @click="goToCategoriesFilter(category)"><span
+                class="custom-span">{{ category.name
                 }}</span></li>
     </ul>
     <h3 class="text-2xl mt-5">Ultimi post</h3>
@@ -72,11 +78,15 @@ onMounted(() => {
 
 <style scoped>
 .category-list span {
-    background-color: var(--custom-pink);
+    background-color: var(--custom-green);
 }
 
 .category-list span:hover {
-    background-color: var(--custom-indaco);
+    background-color: var(--custom-green-dark);
+}
+
+h3 {
+    color: var(--custom-indaco);
 }
 
 .latest-posts-item h3 {

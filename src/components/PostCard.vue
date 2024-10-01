@@ -2,6 +2,7 @@
 const props = defineProps({
     post: Object
 })
+
 </script>
 
 <template>
@@ -9,7 +10,10 @@ const props = defineProps({
         <h3 class="text-3xl">{{ post.title }}</h3>
         <div>
             <p class="text-2xl">{{ post.content }}</p>
-            <span class="custom-span">Leggi di più</span>
+            <div class="flex justify-between items-center">
+                <span class="custom-span">Leggi di più</span>
+                <span class="custom-category">{{ post.category.name }}</span>
+            </div>
         </div>
         <figure>
             <img :src="post.image" :alt="post.title" v-if="post.image">
@@ -31,6 +35,9 @@ const props = defineProps({
       justify-content: space-between;
   }
 
+  .custom-span {
+    padding: 2px 10px;
+  }
 
 
   .post-card figure {
