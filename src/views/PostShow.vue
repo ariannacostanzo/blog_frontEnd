@@ -102,16 +102,16 @@ watch(() => route.params.slug, () => {
 
         <div class="flex items-center justify-between">
 
-            <RouterLink class="custom-span" to="/">
+            <RouterLink v-if="!isLoading" class="custom-span" to="/">
                 Torna indietro
             </RouterLink>
 
             <div>
 
-                <RouterLink class="custom-span" :to="{name: 'updatePost', params: {slug: post.slug}}">
+                <RouterLink v-if="!isLoading" class="custom-span" :to="{name: 'updatePost', params: {slug: post.slug}}">
                     Modifica il post <i class="fa-solid fa-pen ml-2"></i>
                 </RouterLink>
-                <button @click="deletePost" class="custom-span delete-span ml-5">Elimina post<i class="fa-solid fa-trash-can ml-2"></i></button>
+                <button v-if="!isLoading" @click="deletePost" class="custom-span delete-span ml-5">Elimina post<i class="fa-solid fa-trash-can ml-2"></i></button>
             </div>
 
         </div>

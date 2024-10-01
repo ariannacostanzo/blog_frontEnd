@@ -51,11 +51,12 @@ const sendPost = async () => {
     try {
 
         const res = await axios.put(baseUrl + `${slug}`, baseData.value);
-        router.push({ name: 'detailPost', params: { slug: post.value.slug } })
+        const newSlug = baseData.value.title.toLowerCase().replace(/[^\w\s-]/g, "").replace(/\s+/g, "-").replace(/-+/g, "-")
+        router.push({ name: 'detailPost', params: { slug: newSlug } })
         
 
     } catch (error) {
-        console.log(error)
+        errors.value = error.response.data.errors;
         validation();
     } finally {
         isLoading.value = false;
@@ -121,6 +122,16 @@ const fetchCategories = async () => {
     }
 }
 
+const updateCharacters = (field) => {
+    if (field === 'content') {
+        contentCharCount.value = baseData.value.content.length
+    } else if (field === 'title') {
+        titleCharCount.value = baseData.value.title.length
+    } else {
+        sectionCharCount.value = baseData.value.section.length
+    }
+}
+
 
 onMounted(()=> {
     fetchPost();
@@ -137,21 +148,76 @@ onMounted(()=> {
         <form @submit.prevent="sendPost" v-else class="form-container relative">
             <MainJumbotron />
             <div class="my-5 input-row">
+                <!-- titolo  -->
                 <div class="input-container">
                     <label for="title">Titolo:</label>
-                    <input id="title" type="text" v-model="baseData.title" required />
+                    <div>
+                        <div class="relative">
+                            <input @input="updateCharacters('title')" class="pb-4" id="title" type="text"
+                                v-model="baseData.title" />
+                            <p v-if="titleCharCount > 0" class="absolute right-[3px] bottom-[0px]">
+                                <span
+                                    :class="[titleCharCount <= minChar || titleCharCount >= maxTitleChar ? 'text-[#f60001]' : '']">{{
+                                    titleCharCount
+                                    }}</span> / <span
+                                    :class="[titleCharCount <= minChar || titleCharCount >= maxTitleChar ? 'text-[#f60001]' : '']">{{
+                                    maxTitleChar }}</span>
+                            </p>
+                        </div>
+                        <div class="errors-container">
+                            <p v-for="error in titleErrors">{{ error }}</p>
+                        </div>
+                    </div>
                 </div>
                 <div class="input-container">
+                    <!-- descrizione  -->
                     <label for="content">Descrizione:</label>
-                    <textarea rows="4" name="content" id="content" v-model="baseData.content" required></textarea>
+                    <div>
+                        <div class="relative">
+                            <textarea @input="updateCharacters('content')" rows="4" name="content" id="content"
+                                v-model="baseData.content" class="pb-4 py-1">
+                            </textarea>
+                            <p v-if="contentCharCount > 0" class="absolute right-[8px] bottom-[8px]">
+                                <span
+                                    :class="[contentCharCount <= minChar || contentCharCount >= maxContentChar ? 'text-[#f60001]' : '']">{{
+                                    contentCharCount
+                                    }}</span> /
+                                <span
+                                    :class="[contentCharCount <= minChar || contentCharCount >= maxContentChar ? 'text-[#f60001]' : '']">{{
+                                    maxContentChar }}</span>
+                            </p>
+                        </div>
+                        <div class="errors-container">
+                            <p v-for="error in contentErrors">{{ error }}</p>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="my-5 input-row">
                 <div class="input-container">
+                    <!-- contenuto  -->
                     <label for="section">Contenuto:</label>
-                    <textarea class="bigger-textarea" rows="4" name="section" id="section" v-model="baseData.section" required></textarea>
+                    <div>
+                        <div class="relative">
+
+                            <textarea @input="updateCharacters('section')" class="bigger-textarea pb-4 pt-1" rows="4"
+                                name="section" id="section" v-model="baseData.section"></textarea>
+                            <p v-if="sectionCharCount > 0" class="absolute right-[8px] bottom-[8px]">
+                                <span
+                                    :class="[sectionCharCount <= minChar || sectionCharCount >= maxSectionChar ? 'text-[#f60001]' : '']">
+                                    {{ sectionCharCount }}</span> /
+                                <span
+                                    :class="[sectionCharCount <= minChar || sectionCharCount >= maxSectionChar ? 'text-[#f60001]' : '']">{{
+                                    maxSectionChar }}</span>
+                            </p>
+                        </div>
+                        <div class="errors-container">
+                            <p v-for="error in sectionErrors">{{ error }}</p>
+                        </div>
+                    </div>
                 </div>
                 <div class="input-container">
+                    <!-- pubblicato  -->
                     <label>Pubblicato:</label>
                     <div>
                         <label for="published-true">Si</label>
@@ -163,9 +229,13 @@ onMounted(()=> {
                         <input type="radio" id="published-false" name="published" value="false"
                             v-model="baseData.published">
                     </div>
+                    <div class="errors-container">
+                        <p v-for="error in publishedErrors">{{ error }}</p>
+                    </div>
                 </div>
             </div>
             <div class="my-5 input-row">
+                <!-- categoria  -->
                 <label>Scegli una categoria:</label>
             </div>
             <div class="my-5 input-row" v-if="categories.length > 0">
@@ -173,6 +243,11 @@ onMounted(()=> {
                     <label :for="category.name">{{ category.name }}</label>
                     <input type="radio" :id="category.name" :name="category.id" :value="category.id"
                         v-model="baseData.categoryId">
+                </div>
+            </div>
+            <div class="my-5 input-row">
+                <div class="errors-container">
+                    <p v-for="error in categoryErrors">{{ error }}</p>
                 </div>
             </div>
             <div class="flex items-center justify-center mt-10 my-4">
@@ -230,5 +305,9 @@ input[type='text'], textarea {
 .bigger-textarea {
     width: 500px;
     height: 250px;
+}
+
+.errors-container {
+    color: var(--custom-red);
 }
 </style>

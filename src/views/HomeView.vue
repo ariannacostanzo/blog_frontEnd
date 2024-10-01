@@ -3,12 +3,12 @@ import MainJumbotron from '@/components/MainJumbotron.vue';
 import PostContainer from '@/components/PostContainer.vue';
 import SearchBar from '@/components/SearchBar.vue';
 import { ref } from 'vue';
-// da spostare il container dei post in un componente, spostare anche la searchbar in un componente
-//fare un filtro in base alle categorie e mostrare i tags
 const searchTerm = ref('');
 const handleSearch = (term) => {
   searchTerm.value = term;
 };
+
+/* da fare le immagini  */
 
 </script>
 
