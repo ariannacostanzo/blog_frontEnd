@@ -28,22 +28,16 @@ const props = defineProps({
 const setBullets = () => {
     maxPagesShown.value = totalPages.value > 5 ? 5 : totalPages.value
     bulletNumbers.value = []
+
+    //se due pagine indietro non esistono torno 1
+    const startPage = Math.max(currentPage.value - 2, 1);
+    //se due pagine avanti non esistono torno il totale pagine
+    const endPage = Math.min(currentPage.value + 2, totalPages.value);
     
-    if (currentPage.value - 2 > 0) {
-        bulletNumbers.value.push(currentPage.value - 2)
+    for (let i = startPage; i <= endPage; i++) {
+        bulletNumbers.value.push(i);
     }
-    if (currentPage.value - 1 > 0) {
-        bulletNumbers.value.push(currentPage.value -1)
-    }
-
-    bulletNumbers.value.push(currentPage.value)
-
-    if (currentPage.value + 1 > totalPages.value === false) {
-        bulletNumbers.value.push(currentPage.value + 1)
-    }
-    if (currentPage.value + 2 > totalPages.value === false) {
-        bulletNumbers.value.push(currentPage.value + 2)
-    }
+    
 }
 
 const fetchPosts = async (page = 1, limit = 6) => {
@@ -159,7 +153,7 @@ watch(() => props.searchTerm, () => {
             <span @click="slideArrows('left')" v-if="!isLoading && posts.length > 0" class="bullet"
                 :class="{ 'disabled': isLeftDisabled }"><i class="fa-solid fa-angle-left"></i></span>
 
-            <span @click="changePage(page)" v-for="page in bulletNumbers" class="bullet"
+            <span v-if="bulletNumbers.length !== 1" @click="changePage(page)" v-for="page in bulletNumbers" class="bullet"
                 :class="{ active: currentPage === page}">{{ page }}</span>
 
             <span @click="slideArrows('right')" v-if="!isLoading && posts.length > 0" class=" bullet"
