@@ -15,7 +15,8 @@ const baseData = ref({
     section: '',
     published: true,
     tags: [],
-    categoryId: null
+    categoryId: null,
+    image: null
 });
 const post = ref({})
 const isLoading = ref(false);
@@ -40,26 +41,61 @@ const minChar = 3;
 
 //funzioni
 const sendPost = async () => {
+    //svuoto i campi di errori
     emptyErrors(titleErrors);
     emptyErrors(contentErrors);
     emptyErrors(sectionErrors);
     emptyErrors(categoryErrors);
     emptyErrors(publishedErrors);
+
     isLoading.value = true
+
+    const formData = new FormData();
+    formData.append('image', baseData.value.image);
+    formData.append('title', baseData.value.title);
+    formData.append('content', baseData.value.content);
+    formData.append('section', baseData.value.section);
+    formData.append('published', baseData.value.published);
+    formData.append('categoryId', baseData.value.categoryId);
+    if (Array.isArray(baseData.value.tags)) {
+        baseData.value.tags.forEach(tag => {
+            formData.append('tags[]', tag); 
+        });
+    }
+
     try {
         const res = await axios.post(baseUrl, baseData.value);
+        // const res = await axios.post(baseUrl, formData, {
+        //     headers: {
+        //         'Content-Type': 'multipart/form-data',
+        //     }
+        // });
+
+        
+
         post.value = res.data;
+        //trovo il nuovo post creato e faccio l'update
+        await axios.put(`${baseUrl}/${post.value.slug}`, formData, {
+            headers: {
+                    'Content-Type': 'multipart/form-data',
+                }
+        });
+        
         router.push({name: 'detailPost', params: {slug: post.value.slug}})
         isLoading.value = false;
         
     } catch (error) {
-        
+        console.log(error)
         errors.value = error.response.data.errors;
         validation();
     } finally {
         isLoading.value = false;
     }
 }
+
+const handleImage = (event) => {
+    baseData.value.image = event.target.files[0];
+};
 
 const emptyErrors = (container) => {
     container.length = 0
@@ -121,7 +157,7 @@ onMounted(() => {
     <main class="container mx-auto my-5">
         <h1 class="text-center text-4xl mb-5">Crea un nuovo post</h1>
         <LoaderApi v-if="isLoading" />
-        <form @submit.prevent="sendPost" v-else class="form-container relative">
+        <form @submit.prevent="sendPost" v-else class="form-container relative" enctype="multipart/form-data">
             <MainJumbotron />
 
             <div class="my-5 input-row">
@@ -193,21 +229,28 @@ onMounted(() => {
                         </div>
                     </div>
                 </div>
-                <div class="input-container">
-                    <!-- pubblicato  -->
-                    <label>Pubblicato:</label>
-                    <div>
-                        <label for="published-true">Si</label>
-                        <input checked type="radio" id="published-true" name="published" value="true"
+
+                <div>
+                    <div class="input-container">
+                        <!-- pubblicato  -->
+                        <label>Pubblicato:</label>
+                        <div>
+                            <label for="published-true">Si</label>
+                            <input checked type="radio" id="published-true" name="published" value="true"
                             v-model="baseData.published">
-                    </div>
-                    <div>
-                        <label for="published-false">No</label>
-                        <input type="radio" id="published-false" name="published" value="false"
+                        </div>
+                        <div>
+                            <label for="published-false">No</label>
+                            <input type="radio" id="published-false" name="published" value="false"
                             v-model="baseData.published">
+                        </div>
+                        <div class="errors-container">
+                            <p v-for="error in publishedErrors">{{ error }}</p>
+                        </div>
                     </div>
-                    <div class="errors-container">
-                        <p v-for="error in publishedErrors">{{ error }}</p>
+                    <!-- immagine  -->
+                    <div class="input-container mt-10">
+                        <input type="file" @change="handleImage" accept="image/*">
                     </div>
                 </div>
             </div>
@@ -226,7 +269,7 @@ onMounted(() => {
                 <div class="errors-container">
                     <p v-for="error in categoryErrors">{{ error }}</p>
                 </div>
-            </div> 
+            </div>
             <!-- button  -->
             <div class="flex items-center justify-center mt-10 my-4">
                 <RouterLink class=" custom-span" to="/">

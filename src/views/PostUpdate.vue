@@ -47,10 +47,28 @@ const sendPost = async () => {
     emptyErrors(sectionErrors);
     emptyErrors(categoryErrors);
     emptyErrors(publishedErrors);
+
+    const formData = new FormData();
+    formData.append('image', baseData.value.image);
+    formData.append('title', baseData.value.title);
+    formData.append('content', baseData.value.content);
+    formData.append('section', baseData.value.section);
+    formData.append('published', baseData.value.published);
+    formData.append('categoryId', baseData.value.categoryId);
+    if (Array.isArray(baseData.value.tags)) {
+        baseData.value.tags.forEach(tag => {
+            formData.append('tags[]', tag);
+        });
+    }
     isLoading.value = true
     try {
 
-        const res = await axios.put(baseUrl + `${slug}`, baseData.value);
+        // const res = await axios.put(baseUrl + `${slug}`, baseData.value);
+        await axios.put(`${baseUrl}/${post.value.slug}`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            }
+        });
         const newSlug = baseData.value.title.toLowerCase().replace(/[^\w\s-]/g, "").replace(/\s+/g, "-").replace(/-+/g, "-")
         router.push({ name: 'detailPost', params: { slug: newSlug } })
         
@@ -62,6 +80,10 @@ const sendPost = async () => {
         isLoading.value = false;
     }
 }
+
+const handleImage = (event) => {
+    baseData.value.image = event.target.files[0];
+};
 
 const emptyErrors = (container) => {
     container.length = 0
@@ -216,21 +238,28 @@ onMounted(()=> {
                         </div>
                     </div>
                 </div>
-                <div class="input-container">
-                    <!-- pubblicato  -->
-                    <label>Pubblicato:</label>
-                    <div>
-                        <label for="published-true">Si</label>
-                        <input checked type="radio" id="published-true" name="published" value="true"
-                            v-model="baseData.published">
+                <div>
+
+                    <div class="input-container">
+                        <!-- pubblicato  -->
+                        <label>Pubblicato:</label>
+                        <div>
+                            <label for="published-true">Si</label>
+                            <input checked type="radio" id="published-true" name="published" value="true"
+                                v-model="baseData.published">
+                        </div>
+                        <div>
+                            <label for="published-false">No</label>
+                            <input type="radio" id="published-false" name="published" value="false"
+                                v-model="baseData.published">
+                        </div>
+                        <div class="errors-container">
+                            <p v-for="error in publishedErrors">{{ error }}</p>
+                        </div>
                     </div>
-                    <div>
-                        <label for="published-false">No</label>
-                        <input type="radio" id="published-false" name="published" value="false"
-                            v-model="baseData.published">
-                    </div>
-                    <div class="errors-container">
-                        <p v-for="error in publishedErrors">{{ error }}</p>
+                    <!-- immagine  -->
+                    <div class="input-container mt-10">
+                        <input type="file" @change="handleImage" accept="image/*">
                     </div>
                 </div>
             </div>
