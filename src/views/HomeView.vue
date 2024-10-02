@@ -19,7 +19,7 @@ const handleSearch = (term) => {
 
   <main class="container mx-auto mt-5">
 
-    <h1 class="text-4xl font-bold mb-5 text-center">I migliori post</h1>
+    <h1 class="text-4xl font-bold mb-5 text-center">Notizie sui videogiochi: le piu' recenti</h1>
 
     <div class="flex justify-between items-center mb-6">
 
@@ -35,6 +35,7 @@ const handleSearch = (term) => {
     <!-- i posts  -->
     <PostContainer :searchTerm="searchTerm"/>
 
+    
   </main>
   
 </template>

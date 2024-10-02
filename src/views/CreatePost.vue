@@ -35,7 +35,7 @@ let contentCharCount = ref(baseData.value.content.length);
 let sectionCharCount = ref(baseData.value.section.length);
 let titleCharCount = ref(baseData.value.title.length);
 const maxContentChar= 100;
-const maxSectionChar= 2000;
+const maxSectionChar= 10000;
 const maxTitleChar = 100;
 const minChar = 3;
 
