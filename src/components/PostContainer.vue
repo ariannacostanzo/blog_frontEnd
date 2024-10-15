@@ -6,11 +6,12 @@ import LoaderApi from '@/components/LoaderApi.vue';
 import PostCard from './PostCard.vue';
 import { useRoute, useRouter } from 'vue-router'
 // aggiungere la data di pubblicazione 
+//sistemare che quando torno indietro dal postshow invece di rimanere sulla pagina in cui ero torna a pagina 1
 
 //variabili
 const posts = ref([])
 const totalPages = ref(0)
-const currentPage = ref(0)
+const currentPage = ref(1)
 const isLoading = ref(false)
 const route = useRoute();
 const router = useRouter();
@@ -118,11 +119,32 @@ watch(() => props.searchTerm, () => {
 </script>
 
 <template>
+    <!-- paginazione  -->
+    <div class="flex items-center justify-center" v-if="!isLoading && posts.length > 0">
+        <div class="bullets">
+
+            <span @click="changePage(page, 'beginning')" v-if="!isLoading && posts.length > 0" class="bullet"
+                :class="{ 'disabled': isLeftDisabled }"><i class="fa-solid fa-angles-left"></i></span>
+
+            <span @click="slideArrows('left')" v-if="!isLoading && posts.length > 0" class="bullet"
+                :class="{ 'disabled': isLeftDisabled }"><i class="fa-solid fa-angle-left"></i></span>
+
+            <span v-if="bulletNumbers.length !== 1" @click="changePage(page)" v-for="page in bulletNumbers"
+                class="bullet" :class="{ active: currentPage === page }">{{ page }}</span>
+
+            <span @click="slideArrows('right')" v-if="!isLoading && posts.length > 0" class=" bullet"
+                :class="{ 'disabled': isRightDisabled }"><i class="fa-solid fa-angle-right"></i></span>
+
+            <span @click="changePage(page, 'end')" v-if="!isLoading && posts.length > 0" class=" bullet"
+                :class="{ 'disabled': isRightDisabled }"><i class="fa-solid fa-angles-right"></i></span>
+        </div>
+
+    </div>
     <div class="flex items-start">
         <!-- freccia sinistra  -->
-        <div @click="slideArrows('left')" v-if="!isLoading && posts.length > 0">
+        <!-- <div @click="slideArrows('left')" v-if="!isLoading && posts.length > 0">
             <i class="fa-solid fa-arrow-left mr-5 mt-10 arrows" :class="{ 'disabled': isLeftDisabled }"></i>
-        </div>
+        </div> -->
 
         <!-- container dei post  -->
         <div class="post-container" v-if="posts.length">
@@ -139,9 +161,9 @@ watch(() => props.searchTerm, () => {
             mostrare</div>
 
         <!-- freccia destra  -->
-        <div @click="slideArrows('right')" v-if="!isLoading && posts.length > 0">
+        <!-- <div @click="slideArrows('right')" v-if="!isLoading && posts.length > 0">
             <i class="fa-solid fa-arrow-right ml-5 mt-10 arrows" :class="{ 'disabled': isRightDisabled }"></i>
-        </div>
+        </div> -->
     </div>
     <!-- paginazione  -->
     <div class="flex items-center justify-center" v-if="!isLoading && posts.length > 0">
@@ -153,8 +175,8 @@ watch(() => props.searchTerm, () => {
             <span @click="slideArrows('left')" v-if="!isLoading && posts.length > 0" class="bullet"
                 :class="{ 'disabled': isLeftDisabled }"><i class="fa-solid fa-angle-left"></i></span>
 
-            <span v-if="bulletNumbers.length !== 1" @click="changePage(page)" v-for="page in bulletNumbers" class="bullet"
-                :class="{ active: currentPage === page}">{{ page }}</span>
+            <span v-if="bulletNumbers.length !== 1" @click="changePage(page)" v-for="page in bulletNumbers"
+                class="bullet" :class="{ active: currentPage === page}">{{ page }}</span>
 
             <span @click="slideArrows('right')" v-if="!isLoading && posts.length > 0" class=" bullet"
                 :class="{ 'disabled': isRightDisabled }"><i class="fa-solid fa-angle-right"></i></span>

@@ -12,7 +12,8 @@
     width: 100%;
     height: 100%;
     position: absolute;
-    opacity: .4;
+    
+    background-color: rgba(0, 0, 0, .2);
     z-index: -1;
   }
   img {
@@ -22,5 +23,6 @@
     object-position: top center;
     position: absolute;
     z-index: -1;
+    opacity: .2;
   }
 </style>
